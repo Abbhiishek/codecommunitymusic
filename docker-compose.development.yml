@@ -1,0 +1,70 @@
+version: '1'
+
+services:
+  frontend:
+    image: 'ccm-frontend'
+    build: 
+      context: ./client
+      dockerfile: Dockerfile.development
+      target: dev
+    ports:
+      - "3000:3000"
+    networks:
+      - codecommunitymusic-network
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=4096
+      - NEXTAUTH_URL=http://localhost:3000
+      - __NEXT_PRIVATE_PREBUNDLED_REACT = next
+      - APP_URL=http://localhost:3000
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+
+  backend:
+    image: 'ccm-backend'
+    build:
+      context: ./server
+      dockerfile: Dockerfile.development
+    ports:
+      - "8000:8000"
+    networks:
+      - codecommunitymusic-network
+    depends_on:
+      - database
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      - DJANGO_SUPERUSER_PASSWORD=password
+      - SECRET_KEY= 
+      - DATABASE_NAME=postgres
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=password
+      - DATABASE_HOST=database
+      - EMAIL_HOST_USER=hello@gmail.com
+      - EMAIL_HOST_PASSWORD=demo_password
+    volumes:
+      - ./server:/app
+    command:  > 
+      sh -c "
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py runserver  0.0.0.0:8000"
+
+
+
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: postgres  
+      POSTGRES_USER: postgres  
+      POSTGRES_PASSWORD: password
+    networks:
+      - codecommunitymusic-network
+    ports:
+      - "5432:5432"
+
+
+networks:
+  codecommunitymusic-network:
+    driver: bridge
