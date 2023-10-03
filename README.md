@@ -67,6 +67,9 @@ docker compose -f docker-compose.dev.yml  up --build --force-recreate
 
  check out you docker conatiners you might see similar as below: 
 
+ <img width="769" alt="image" src="https://github.com/Abbhiishek/codecommunitymusic/assets/86338762/ca372e58-726a-4b4a-9372-fa6892ee4992">
+
+
  6. If you want to view the backend admin panel, you would require to create one superuser for that. Run the below command in another terminal instance at same path as before
 
 ```bash
